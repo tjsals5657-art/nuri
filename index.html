@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>꼬마 요리사의 카페놀이 - QR 코드 & 링크 생성기 📖🍹🍰</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Jua', 'Gaegu', sans-serif;
+            background-color: #F5EBE0;
+            color: #4A3E3D;
+        }
+
+        .button-bounce {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .button-bounce:hover {
+            transform: scale(1.03);
+        }
+        .button-bounce:active {
+            transform: scale(0.97);
+        }
+
+        @keyframes slide-in {
+            0% { transform: translateY(100%) translateX(-50%); opacity: 0; }
+            10% { transform: translateY(0) translateX(-50%); opacity: 1; }
+            90% { transform: translateY(0) translateX(-50%); opacity: 1; }
+            100% { transform: translateY(100%) translateX(-50%); opacity: 0; }
+        }
+        .toast-active {
+            animation: slide-in 3s forwards ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
+
+    <header class="text-center py-4">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-amber-950 flex items-center justify-center gap-2 drop-shadow-sm">
+            <span>📖</span> 꼬마 요리사의 카페놀이 <span>✨</span>
+        </h1>
+        <p class="text-sm md:text-base text-amber-800/90 font-bold mt-2">
+            웹 링크(URL) 및 QR 코드가 자동으로 생성되었습니다! 스마트폰 카메라로 QR을 스캔해 보세요.
+        </p>
+    </header>
+
+    <main class="flex-grow w-full max-w-xl mx-auto my-4 flex flex-col justify-center items-center gap-6">
+        
+        <!-- QR 코드 카드 -->
+        <div class="w-full bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-amber-900/80 flex flex-col items-center text-center relative overflow-hidden">
+            <!-- 상단 바인더 장식 -->
+            <div class="absolute top-2 inset-x-0 flex justify-center gap-3">
+                <div class="w-3 h-4 bg-gray-300 rounded-full border border-gray-400"></div>
+                <div class="w-3 h-4 bg-gray-300 rounded-full border border-gray-400"></div>
+                <div class="w-3 h-4 bg-gray-300 rounded-full border border-gray-400"></div>
+                <div class="w-3 h-4 bg-gray-300 rounded-full border border-gray-400"></div>
+            </div>
+
+            <div class="mt-4 mb-2">
+                <span class="text-xs bg-amber-100 text-amber-900 px-3 py-1 rounded-full font-bold border border-amber-200">
+                    📱 스마트폰 바로가기 QR 코드
+                </span>
+            </div>
+
+            <!-- QR 코드 출력 영역 -->
+            <div id="qrcode-container" class="bg-amber-50/50 p-4 rounded-2xl border-2 border-dashed border-amber-300 my-3 flex justify-center items-center shadow-inner min-w-[200px] min-h-[200px]">
+                <div id="qrcode"></div>
+            </div>
+
+            <p class="text-xs text-amber-800 font-bold mb-4">
+                카메라 앱을 열어 QR 코드를 비추면 게임으로 바로 이동합니다!
+            </p>
+
+            <!-- 주요 액션 버튼 모음 -->
+            <div class="w-full flex flex-col gap-2.5">
+                <button onclick="openGameInNewTab()" class="w-full py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-lg button-bounce shadow-lg border-b-4 border-amber-700 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-gamepad"></i> 지금 바로 게임 플레이하기
+                </button>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="copyGameUrl()" class="py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs button-bounce shadow flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-link"></i> 링크 복사하기
+                    </button>
+                    <button onclick="downloadQRCode()" class="py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs button-bounce shadow flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-download"></i> QR 이미지 저장
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 게임 실행 방법 가이드 카카오 스타일 안내 -->
+        <div class="w-full bg-amber-100/60 rounded-2xl p-4 border border-amber-200 text-xs text-amber-900 leading-relaxed">
+            <h3 class="font-bold mb-1 text-sm flex items-center gap-1">
+                <i class="fa-solid fa-circle-info text-amber-700"></i> 안내 사항
+            </h3>
+            <ul class="list-disc list-inside space-y-1">
+                <li>이 페이지는 작성하신 카페놀이 게임 전체 코드를 Data URL 형태의 직렬화 링크로 저장하고 있습니다.</li>
+                <li>QR 코드 또는 [링크 복사하기]를 통해 다른 디바이스나 친구들에게 자유롭게 전달할 수 있습니다.</li>
+            </ul>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-2 text-xs text-amber-900/80 font-bold">
+        <p>© 꼬마 요리사의 해피 디저트 레시피 북 📖🍹🍰</p>
+    </footer>
+
+    <!-- 알림용 토스트 -->
+    <div id="toast-message" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-amber-900 text-amber-50 font-bold text-xs px-5 py-2.5 rounded-full shadow-2xl z-50">
+        알림 메시지
+    </div>
+
+    <script>
+        /* 1. 원본 게임 HTML 소스코드 저장 */
+        const rawGameHtml = `<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>꼬마 요리사의 해피 디저트 레시피 북 📖🍹🍰</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Jua', 'Gaegu', sans-serif; background-color: #F5EBE0; user-select: none; -webkit-user-select: none; overflow-x: hidden; }
+        .notepad-frame { box-shadow: 0 20px 50px rgba(0,0,0,0.15), inset 0 2px 5px rgba(255,255,255,0.6); background: #FFFDFC; }
+        @keyframes fruit-drop { 0% { transform: translateY(-120px) scale(0.3) rotate(0deg); opacity: 0; } 60% { transform: translateY(10px) scale(1.1) rotate(15deg); opacity: 1; } 80% { transform: translateY(-8px) scale(0.95) rotate(-10deg); } 100% { transform: translateY(0) scale(1) rotate(0deg); } }
+        .animate-fruit-drop { animation: fruit-drop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards; }
+        @keyframes cream-drip { 0% { transform: translateY(-40px) scaleY(0.3) scaleX(1.4); opacity: 0; } 60% { transform: translateY(3px) scaleY(1.15) scaleX(0.9); opacity: 0.95; } 80% { transform: translateY(-2px) scaleY(0.95) scaleX(1.05); opacity: 1; } 100% { transform: translateY(0) scaleY(1) scaleX(1); opacity: 1; } }
+        .animate-cream-drip { animation: cream-drip 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards; }
+        @keyframes blender-shake { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 10% { transform: translate(-2px, -1px) rotate(-1deg); } 20% { transform: translate(2px, 1px) rotate(1deg); } 30% { transform: translate(-1px, 2px) rotate(-0.5deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-2px, 1px) rotate(-1deg); } 60% { transform: translate(2px, -1px) rotate(0.5deg); } 70% { transform: translate(-1px, -1px) rotate(-1deg); } 80% { transform: translate(1px, 2px) rotate(1deg); } 90% { transform: translate(-1px, -1px) rotate(-0.5deg); } }
+        .animate-blender-shake { animation: blender-shake 0.1s infinite; }
+        @keyframes vortex-spin { 0% { transform: rotate(0deg) scale(0.9); opacity: 0.6; } 50% { transform: rotate(180deg) scale(1.1); opacity: 0.95; } 100% { transform: rotate(360deg) scale(0.9); opacity: 0.6; } }
+        .animate-vortex { animation: vortex-spin 0.4s infinite linear; }
+        @keyframes oven-vibration { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(1px, 0.8px) rotate(0.15deg); } 50% { transform: translate(-0.8px, 1px) rotate(-0.15deg); } 75% { transform: translate(0.8px, -0.8px) rotate(0.1deg); } }
+        .animate-oven { animation: oven-vibration 0.18s infinite; }
+        @keyframes bread-rise { 0% { transform: scale(0.8) translateY(8px); } 100% { transform: scale(1.18) translateY(-4px); } }
+        .animate-bread-rise { animation: bread-rise 4.0s forwards ease-out; }
+        @keyframes steam-rise { 0% { transform: translateY(10px) scale(0.8); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-25px) scale(1.2); opacity: 0; } }
+        .steam-cloud { animation: steam-rise 2.5s infinite ease-out; }
+        .button-bounce { transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .button-bounce:hover { transform: scale(1.04); }
+        .button-bounce:active { transform: scale(0.96); }
+        @keyframes slide-in { 0% { transform: translateY(100%) translateX(-50%); opacity: 0; } 10% { transform: translateY(0) translateX(-50%); opacity: 1; } 90% { transform: translateY(0) translateX(-50%); opacity: 1; } 100% { transform: translateY(100%) translateX(-50%); opacity: 0; } }
+        .toast-active { animation: slide-in 3.5s forwards ease-out; }
+        @keyframes sparkle { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.2); } }
+        .sparkle-effect { animation: sparkle 2s infinite ease-in-out; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between py-2 px-3 md:px-8">
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration, volume) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = type || 'sine'; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(volume || 0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+        function soundClick() { playTone(523.25, 'sine', 0.1); setTimeout(() => playTone(659.25, 'sine', 0.1), 60); }
+        function soundDrop() { playTone(400, 'triangle', 0.15, 0.25); setTimeout(() => playTone(300, 'triangle', 0.12, 0.2), 80); }
+        function soundPour() { playTone(600, 'sine', 0.3, 0.15); setTimeout(() => playTone(800, 'sine', 0.2, 0.1), 100); }
+        function soundSqueeze() { playTone(350, 'triangle', 0.2, 0.15); setTimeout(() => playTone(450, 'sine', 0.2, 0.2), 60); }
+        function soundPageFlip() { playTone(180, 'triangle', 0.25, 0.25); setTimeout(() => playTone(250, 'sine', 0.2, 0.2), 50); setTimeout(() => playTone(350, 'sine', 0.15, 0.15), 100); }
+        function soundSuccess() { playTone(523.25, 'triangle', 0.15); setTimeout(() => playTone(659.25, 'triangle', 0.15), 100); setTimeout(() => playTone(783.99, 'triangle', 0.15), 200); setTimeout(() => playTone(1046.50, 'triangle', 0.3), 300); }
+        function soundDing() { playTone(880, 'sine', 0.1); setTimeout(() => playTone(880, 'sine', 0.1), 150); setTimeout(() => playTone(1760, 'sine', 0.5), 300); }
+        let motorInterval;
+        function startMotorSound() { if (audioCtx.state === 'suspended') audioCtx.resume(); motorInterval = setInterval(() => { playTone(110 + Math.random() * 30, 'triangle', 0.08, 0.1); }, 60); }
+        function stopMotorSound() { clearInterval(motorInterval); }
+    <\/script>
+    <header class="text-center py-2 relative">
+        <h1 class="text-2xl md:text-4xl font-extrabold text-amber-950 flex items-center justify-center gap-1.5 drop-shadow-sm">
+            <span>📖</span> 꼬마 요리사의 해피 디저트 다이어리 <span>✨</span>
+        </h1>
+        <p class="text-[11px] md:text-sm text-amber-800/80 font-bold mt-1">한 장씩 책장을 넘겨가며 순서대로 나만의 요리를 완성해요!</p>
+    </header>
+    <main class="flex-grow w-full max-w-2xl mx-auto my-3 flex flex-col justify-center relative">
+        <div class="w-full bg-amber-900/95 rounded-[2rem] p-2.5 shadow-2xl border-4 border-amber-950 overflow-hidden relative">
+            <div class="absolute inset-x-0 top-1.5 h-6 z-30 flex justify-center gap-4 pointer-events-none">
+                <div class="w-3 h-5 bg-gradient-to-b from-gray-300 via-gray-100 to-gray-400 rounded-full border border-gray-500 shadow-sm opacity-90"></div>
+                <div class="w-3 h-5 bg-gradient-to-b from-gray-300 via-gray-100 to-gray-400 rounded-full border border-gray-500 shadow-sm opacity-90"></div>
+                <div class="w-3 h-5 bg-gradient-to-b from-gray-300 via-gray-100 to-gray-400 rounded-full border border-gray-500 shadow-sm opacity-90"></div>
+                <div class="w-3 h-5 bg-gradient-to-b from-gray-300 via-gray-100 to-gray-400 rounded-full border border-gray-500 shadow-sm opacity-90"></div>
+                <div class="w-3 h-5 bg-gradient-to-b from-gray-300 via-gray-100 to-gray-400 rounded-full border border-gray-500 shadow-sm opacity-90"></div>
+            </div>
+            <div class="w-full bg-[#FFFDFC] rounded-[1.6rem] overflow-hidden relative pt-6">
+                <div id="book-slider" class="flex w-full transition-transform duration-700 ease-in-out transform translate-x-0">
+                    <div class="min-w-full flex flex-col items-center justify-center p-5 md:p-8 text-center bg-amber-50/20">
+                        <div class="relative mb-4 mt-2">
+                            <span class="text-7xl block animate-bounce">👩‍🍳</span>
+                            <span class="absolute -top-2 -right-2 text-3xl sparkle-effect">✨</span>
+                            <span class="absolute -bottom-2 -left-2 text-3xl sparkle-effect" style="animation-delay: 1s">🍓</span>
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-amber-900 mb-1 font-serif">Little Chef's</h2>
+                        <h3 class="text-xl md:text-2xl font-bold text-amber-700 mb-4">달콤 플레이트 요리 일기장</h3>
+                        <div class="max-w-sm bg-white rounded-2xl border-4 border-dashed border-amber-200 p-3.5 mb-6 text-xs text-amber-800 shadow-inner">
+                            <p class="leading-relaxed font-bold">"안녕! 꼬마 요리사 친구들! ❤️<br>한 장 한 장 요리 순서대로 예쁘게 아래로 재료를 담고 채우며 나만의 디저트 세트를 정성껏 가꾸어봐요!"</p>
+                        </div>
+                        <button onclick="goToPage(1)" class="button-bounce bg-amber-500 hover:bg-amber-600 text-white text-lg font-bold px-7 py-3 rounded-full shadow-lg border-b-4 border-amber-700 flex items-center gap-2 mb-2">책장 열고 요리 시작 📖 <i class="fa-solid fa-arrow-right text-sm"></i></button>
+                    </div>
+                    <div class="min-w-full flex flex-col p-4 md:p-6 justify-between gap-4">
+                        <div class="flex justify-between items-center pb-1.5 border-b-2 border-amber-100">
+                            <h3 class="text-lg md:text-xl font-bold text-amber-800 flex items-center gap-1.5"><i class="fa-solid fa-basket-shopping text-red-400"></i> 주스 재료 담기</h3>
+                            <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">1단계-①</span>
+                        </div>
+                        <div class="bg-amber-50/20 p-2.5 rounded-2xl border border-amber-100">
+                            <h4 class="text-xs font-bold text-amber-900 mb-1.5 flex items-center gap-1">🍓 과일 바구니 선택 <span class="text-[10px] text-gray-400">(최대 6개)</span></h4>
+                            <div class="grid grid-cols-4 gap-1.5 mb-3">
+                                <button onclick="addFruit('딸기', '🍓', '#FF4E79')" class="button-bounce bg-red-50/80 hover:bg-red-100 border border-red-200 p-1.5 rounded-xl flex flex-col items-center"><span class="text-xl">🍓</span><span class="text-[9px] font-bold text-red-600 mt-0.5">딸기</span></button>
+                                <button onclick="addFruit('바나나', '🍌', '#FFD15C')" class="button-bounce bg-yellow-50/80 hover:bg-yellow-100 border border-yellow-200 p-1.5 rounded-xl flex flex-col items-center"><span class="text-xl">🍌</span><span class="text-[9px] font-bold text-yellow-600 mt-0.5">바나나</span></button>
+                                <button onclick="addFruit('키위', '🥝', '#7CB342')" class="button-bounce bg-green-50/80 hover:bg-green-100 border border-green-200 p-1.5 rounded-xl flex flex-col items-center"><span class="text-xl">🥝</span><span class="text-[9px] font-bold text-green-700 mt-0.5">키위</span></button>
+                                <button onclick="addFruit('블루베리', '🫐', '#5C6BC0')" class="button-bounce bg-indigo-50/80 hover:bg-indigo-100 border border-indigo-200 p-1.5 rounded-xl flex flex-col items-center"><span class="text-xl">🫐</span><span class="text-[9px] font-bold text-indigo-700 mt-0.5">블루베리</span></button>
+                            </div>
+                            <h4 class="text-xs font-bold text-amber-900 mb-1.5 flex items-center gap-1">🥛 음료 베이스 선택</h4>
+                            <div class="grid grid-cols-4 gap-1.5">
+                                <button id="base-milk" onclick="setLiquidBase('우유', '#FFFDF3')" class="p-1.5 rounded-xl border border-slate-200 bg-white text-[10px] font-bold text-slate-500 button-bounce flex flex-col items-center gap-0.5"><span>🥛</span> 우유</button>
+                                <button id="base-ade" onclick="setLiquidBase('에이드', '#E0F2FE')" class="p-1.5 rounded-xl border border-slate-200 bg-white text-[10px] font-bold text-slate-500 button-bounce flex flex-col items-center gap-0.5"><span>🫧</span> 에이드</button>
+                                <button id="base-yogurt" onclick="setLiquidBase('요거트', '#FDF2F8')" class="p-1.5 rounded-xl border border-slate-200 bg-white text-[10px] font-bold text-slate-500 button-bounce flex flex-col items-center gap-0.5"><span>🍧</span> 요거트</button>
+                                <button id="base-water" onclick="setLiquidBase('물', '#ECFDF5')" class="p-1.5 rounded-xl border border-slate-200 bg-white text-[10px] font-bold text-slate-500 button-bounce flex flex-col items-center gap-0.5"><span>🧊</span> 물</button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center justify-center py-1">
+                            <h4 class="text-xs font-bold text-amber-800 mb-1">🥛 실시간 담기는 해피 준비 컵</h4>
+                            <div class="relative w-36 h-40 flex flex-col justify-end items-center mt-1">
+                                <div id="prep-cup-outer" class="relative w-24 h-32 bg-white/30 border-[4px] border-amber-300 rounded-b-2xl rounded-t-sm shadow-inner flex flex-col justify-end overflow-hidden">
+                                    <div id="prep-cup-liquid" class="absolute bottom-0 inset-x-0 h-0 bg-transparent transition-all duration-700 ease-out z-0"></div>
+                                    <div id="prep-cup-items" class="absolute inset-1 flex flex-wrap gap-0.5 items-end justify-center z-10 overflow-hidden pb-1"></div>
+                                    <div id="prep-cup-guide" class="absolute inset-0 flex flex-col items-center justify-center text-center p-2 pointer-events-none opacity-40">
+                                        <span class="text-lg animate-pulse">👇</span>
+                                        <span class="text-[9px] font-bold text-amber-900 mt-0.5">위 단추를 누르면<br>여기에 채워져요!</span>
+                                    </div>
+                                </div>
+                                <div class="w-28 h-1.5 bg-amber-700/80 rounded-full mt-1 shadow-sm"></div>
+                            </div>
+                        </div>
+                        <div class="border-t pt-2 flex flex-col gap-2">
+                            <div class="flex justify-between items-center text-[10px] text-amber-800">
+                                <span>현재 담긴 과일:</span>
+                                <div id="selected-fruits" class="flex gap-1 bg-amber-50/40 p-1 rounded-lg border border-amber-100 min-h-[22px] items-center"></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="resetBlender()" class="flex-1 py-2 rounded-xl bg-gray-200 text-gray-700 font-bold button-bounce text-xs"><i class="fa-solid fa-rotate-left mr-0.5"></i> 컵 비우기</button>
+                                <button onclick="goToPage(2)" class="flex-1 py-2 rounded-xl bg-amber-500 text-white font-bold button-bounce text-xs shadow-md border-b-2 border-amber-700">믹서기로 이동하기 <i class="fa-solid fa-arrow-right ml-0.5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="min-w-full flex flex-col p-4 md:p-6 justify-between gap-3">
+                        <div class="flex justify-between items-center pb-1.5 border-b-2 border-amber-100">
+                            <h3 class="text-lg md:text-xl font-bold text-amber-800 flex items-center gap-1.5"><i class="fa-solid fa-blender text-amber-500"></i> 요리사 믹싱 룸</h3>
+                            <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">1단계-②</span>
+                        </div>
+                        <p class="text-xs text-gray-500 text-center">준비 컵 속의 신선한 재료들을 믹서기로 세차게 믹싱해 보세요!</p>
+                        <div class="flex flex-col items-center justify-center my-1">
+                            <div class="relative w-36 h-44 flex flex-col justify-end items-center">
+                                <div id="blender-cup" class="relative w-24 h-32 bg-white/40 border-[4px] border-amber-400/80 rounded-t-[1.5rem] rounded-b-sm shadow-inner flex flex-col justify-end overflow-hidden transition-all duration-300">
+                                    <div class="absolute top-0 inset-x-0 h-2 bg-amber-500 rounded-t-sm z-20"></div>
+                                    <div id="blender-items" class="absolute inset-1 flex flex-wrap gap-0.5 items-end justify-center z-10 overflow-hidden pb-1"></div>
+                                    <div id="blender-juice-level" class="absolute bottom-0 inset-x-0 h-0 bg-transparent transition-all duration-1000 z-0"><div id="blender-vortex" class="hidden absolute top-0 inset-x-0 h-2.5 bg-white/30 animate-vortex rounded-full"></div></div>
+                                </div>
+                                <div class="w-32 h-8 bg-amber-500 rounded-b-xl border-x-2 border-amber-600 shadow relative flex justify-center items-center z-20">
+                                    <button onclick="blendFruits()" id="blend-btn" class="w-7 h-7 rounded-full bg-red-500 border border-white text-white font-extrabold text-[9px] shadow hover:bg-red-600 button-bounce flex items-center justify-center animate-pulse">ON</button>
+                                </div>
+                            </div>
+                            <p id="blender-hint" class="text-[10px] text-amber-600/80 mt-2 font-bold text-center">믹서기 ON 단추를 탭해서 세게 갈아주세요!</p>
+                        </div>
+                        <div class="border-t pt-2 flex flex-col gap-1.5">
+                            <div class="bg-amber-50/40 p-2 rounded-xl text-[10px] text-amber-800 leading-tight"><strong>💡 요리사 노트:</strong> 과일이 1개 이상 담겨있어야 믹싱을 시작할 수 있어요!</div>
+                            <div class="flex gap-2">
+                                <button onclick="goToPage(1)" class="flex-1 py-2 rounded-xl bg-gray-100 text-amber-900 font-bold button-bounce text-xs"><i class="fa-solid fa-arrow-left mr-0.5"></i> 재료 더 담기</button>
+                                <button id="next-to-baking" onclick="finishJuice()" class="hidden flex-1 py-2 rounded-xl bg-emerald-500 text-white font-bold button-bounce text-xs shadow-md border-b-2 border-emerald-700">과즙 주스 담고 다음으로 <i class="fa-solid fa-arrow-right ml-0.5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="min-w-full flex flex-col p-4 md:p-6 justify-between gap-3">
+                        <div class="flex justify-between items-center pb-1.5 border-b-2 border-orange-100">
+                            <h3 class="text-lg md:text-xl font-bold text-orange-800 flex items-center gap-1.5"><i class="fa-solid fa-cookie-bite text-amber-500"></i> 반죽 & 크림 세팅</h3>
+                            <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-bold">2단계-①</span>
+                        </div>
+                        <div class="bg-orange-50/20 p-2.5 rounded-2xl border border-orange-100">
+                            <h4 class="text-[11px] font-bold text-orange-900 mb-1">🧁 1. 빵 종류 틀 고르기</h4>
+                            <div class="grid grid-cols-3 gap-1.5 mb-2.5">
+                                <button id="mold-cupcake" onclick="selectBreadType('cupcake', '🧁', '달콤 컵케이크')" class="p-1 border-2 border-orange-400 bg-orange-100/40 rounded-lg flex flex-col items-center gap-0.5 transition-all"><span class="text-xl">🧁</span><span class="text-[9px] font-bold text-orange-900">컵케이크</span></button>
+                                <button id="mold-donut" onclick="selectBreadType('donut', '🍩', '링 도넛')" class="p-1 border border-gray-200 bg-white rounded-lg flex flex-col items-center gap-0.5 transition-all"><span class="text-xl">🍩</span><span class="text-[9px] font-bold text-gray-500">링 도넛</span></button>
+                                <button id="mold-cake" onclick="selectBreadType('cake', '🍰', '스위트 조각케익')" class="p-1 border border-gray-200 bg-white rounded-lg flex flex-col items-center gap-0.5 transition-all"><span class="text-xl">🍰</span><span class="text-[9px] font-bold text-gray-500">조각케익</span></button>
+                            </div>
+                            <h4 class="text-[11px] font-bold text-orange-900 mb-1">🍓 2. 달콤 크림 소스 붓기</h4>
+                            <div class="grid grid-cols-2 gap-1 text-[10px]">
+                                <button id="cream-strawberry" onclick="selectCream('딸기 핑크', '#FBCFE8')" class="p-1.5 border border-gray-200 bg-white text-gray-600 rounded-lg flex items-center gap-1 justify-center"><span class="w-2 h-2 rounded-full bg-pink-400"></span> 딸기 핑크</button>
+                                <button id="cream-choco" onclick="selectCream('초코 브라운', '#D97706')" class="p-1.5 border border-gray-200 bg-white text-gray-600 rounded-lg flex items-center gap-1 justify-center"><span class="w-2 h-2 rounded-full bg-amber-950"></span> 리얼 초코</button>
+                                <button id="cream-mint" onclick="selectCream('민트 그린', '#A7F3D0')" class="p-1.5 border border-gray-200 bg-white text-gray-600 rounded-lg flex items-center gap-1 justify-center"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> 민트 그린</button>
+                                <button id="cream-vanilla" onclick="selectCream('소프트 화이트', '#FEF3C7')" class="p-1.5 border border-gray-200 bg-white text-gray-600 rounded-lg flex items-center gap-1 justify-center"><span class="w-2 h-2 rounded-full bg-yellow-300"></span> 바닐라 크림</button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center py-1">
+                            <h4 class="text-xs font-bold text-orange-800 mb-1">👨‍🍳 오븐 조리 준비대</h4>
+                            <div class="relative w-36 h-36 flex flex-col justify-end items-center">
+                                <div class="relative w-24 h-28 bg-white/40 border-2 border-dashed border-orange-300 rounded-xl flex flex-col items-center justify-center overflow-hidden">
+                                    <div class="relative flex flex-col items-center justify-center mt-3">
+                                        <div id="prep-cream-layer" class="absolute -top-2 w-10 h-5 rounded-full z-10 opacity-0 transition-all duration-300 filter blur-[0.5px]"></div>
+                                        <div id="prep-dough-base" class="text-4xl transform transition-transform duration-300 z-0">🧁</div>
+                                    </div>
+                                    <div id="prep-bread-guide" class="absolute inset-0 flex flex-col items-center justify-center text-center p-2 pointer-events-none opacity-40">
+                                        <span class="text-xl animate-pulse">🧁</span>
+                                        <span class="text-[9px] font-bold text-orange-900">도우와 크림을 고르세요!</span>
+                                    </div>
+                                </div>
+                                <div class="w-28 h-1 bg-slate-300 rounded-full mt-1"></div>
+                            </div>
+                        </div>
+                        <div class="border-t pt-2 flex flex-col gap-1">
+                            <p class="text-[9px] text-orange-800 text-center font-bold" id="recipe-summary">달콤 컵케이크 + 아직 선택 안함</p>
+                            <div class="flex gap-2">
+                                <button onclick="goToPage(2)" class="flex-1 py-2 rounded-xl bg-orange-100 text-orange-800 font-bold button-bounce text-xs"><i class="fa-solid fa-arrow-left mr-0.5"></i> 믹서기방 가기</button>
+                                <button onclick="goToPage(4)" class="flex-1 py-2 rounded-xl bg-orange-500 text-white font-bold button-bounce text-xs shadow-md border-b-2 border-orange-700">마법 오븐으로 <i class="fa-solid fa-arrow-right ml-0.5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="min-w-full flex flex-col p-4 md:p-6 justify-between gap-3">
+                        <div class="flex justify-between items-center pb-1.5 border-b-2 border-orange-100">
+                            <h3 class="text-lg md:text-xl font-bold text-orange-800 flex items-center gap-1.5"><i class="fa-solid fa-fire-burner text-red-500"></i> 오븐 조리실</h3>
+                            <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-bold">2단계-②</span>
+                        </div>
+                        <p class="text-xs text-gray-500 text-center">오븐에서 스위치를 탭하여 도우 반죽을 뜨겁게 익혀보세요!</p>
+                        <div class="flex flex-col items-center justify-center my-1">
+                            <div id="oven-body" class="relative w-44 h-36 bg-neutral-700 rounded-xl border-[4px] border-neutral-800 p-1 shadow-xl flex flex-col justify-between overflow-hidden">
+                                <div class="relative flex-grow bg-neutral-900 rounded-md border border-neutral-500 overflow-hidden flex items-center justify-center">
+                                    <div id="oven-heat-light" class="hidden absolute inset-0 bg-red-600/0 z-10 transition-colors duration-1000"></div>
+                                    <div class="relative z-20 flex flex-col items-center">
+                                        <div id="oven-steam" class="hidden absolute -top-5 flex gap-0.5">
+                                            <span class="text-xs opacity-35 steam-cloud">☁️</span>
+                                            <span class="text-xs opacity-35 steam-cloud" style="animation-delay: 0.5s">☁️</span>
+                                        </div>
+                                        <div id="oven-bread" class="text-3xl transition-transform duration-[4s] scale-90 origin-center">🧁</div>
+                                    </div>
+                                </div>
+                                <div class="h-6 bg-neutral-800 rounded-b flex justify-between items-center px-1">
+                                    <span class="text-[9px] text-neutral-400 font-mono">180°C</span>
+                                    <button id="bake-btn" onclick="startBaking()" class="bg-yellow-400 hover:bg-yellow-300 text-neutral-800 text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 button-bounce"><i class="fa-solid fa-stopwatch"></i> 굽기!</button>
+                                </div>
+                            </div>
+                            <p id="oven-hint" class="text-[10px] text-orange-700/80 mt-2 font-bold text-center">굽기 다이얼을 탭하여 완벽하게 가열해 봐요!</p>
+                        </div>
+                        <div class="border-t pt-2 flex flex-col gap-2">
+                            <div class="w-full max-w-[150px] mx-auto bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                                <div id="bake-progress" class="bg-orange-500 h-full w-0 transition-all duration-300"></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="goToPage(3)" class="flex-1 py-2 rounded-xl bg-gray-100 text-orange-900 font-bold button-bounce text-xs"><i class="fa-solid fa-arrow-left mr-0.5"></i> 반죽 종류 고르기</button>
+                                <button id="next-to-plate" onclick="finishBaking()" class="hidden flex-1 py-2 rounded-xl bg-emerald-500 text-white font-bold button-bounce text-xs shadow-md border-b-2 border-emerald-700">접시에 빵 담으러 가기 <i class="fa-solid fa-arrow-right ml-0.5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="min-w-full flex flex-col p-4 md:p-6 justify-between gap-3">
+                        <div class="flex justify-between items-center pb-1.5 border-b-2 border-pink-100">
+                            <h3 class="text-lg md:text-xl font-bold text-pink-800 flex items-center gap-1.5"><i class="fa-solid fa-cookie text-amber-600"></i> 보너스 가니쉬</h3>
+                            <span class="text-xs bg-pink-100 text-pink-800 px-2 py-0.5 rounded-full font-bold">3단계-①</span>
+                        </div>
+                        <div class="bg-pink-50/20 p-2.5 rounded-2xl border border-pink-100">
+                            <h4 class="text-[11px] font-bold text-pink-950 mb-1.5 text-center">🍽️ 접시 위에 올릴 깜찍하고 달콤한 장식을 골라보세요! (최대 3개)</h4>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="addGarnish('🍒', '체리')" class="p-1.5 border border-gray-100 hover:border-pink-300 rounded-xl bg-white flex flex-col items-center button-bounce shadow-sm"><span class="text-xl">🍒</span><span class="text-[9px] font-bold text-gray-700 mt-0.5">체리</span></button>
+                                <button onclick="addGarnish('🍨', '아이스크림')" class="p-1.5 border border-gray-100 hover:border-pink-300 rounded-xl bg-white flex flex-col items-center button-bounce shadow-sm"><span class="text-xl">🍨</span><span class="text-[9px] font-bold text-gray-700 mt-0.5">눈꽃크림</span></button>
+                                <button onclick="addGarnish('🍡', '경단')" class="p-1.5 border border-gray-100 hover:border-pink-300 rounded-xl bg-white flex flex-col items-center button-bounce shadow-sm"><span class="text-xl">🍡</span><span class="text-[9px] font-bold text-gray-700 mt-0.5">꽃송이떡</span></button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center py-1">
+                            <h4 class="text-xs font-bold text-pink-800 mb-1">🍽️ 플레이팅 실시간 완성 모습</h4>
+                            <div class="w-full max-w-sm bg-stone-100 rounded-[1.2rem] border-2 border-amber-200 p-2 relative flex flex-col justify-around h-36">
+                                <div class="absolute inset-1 border border-dashed border-amber-300/40 rounded-[1rem] pointer-events-none"></div>
+                                <div class="flex justify-around items-end relative z-10 h-full pb-1">
+                                    <div class="flex flex-col items-center">
+                                        <div class="relative w-8 h-12 bg-white/60 border border-amber-400 rounded-b-lg overflow-hidden">
+                                            <div id="preview-juice-fill" class="w-full bg-red-400 h-8 absolute bottom-0"></div>
+                                        </div>
+                                        <span class="text-[8px] font-bold text-amber-900 mt-0.5">주스</span>
+                                    </div>
+                                    <div class="relative flex flex-col items-center justify-center">
+                                        <div id="preview-cream" class="absolute top-1 w-10 h-4.5 rounded-full z-20 border border-pink-100 filter blur-[1px]"></div>
+                                        <div id="preview-bread-emoji" class="text-4xl relative z-10">🧁</div>
+                                        <span class="text-[8px] font-bold text-amber-900 mt-0.5">디저트</span>
+                                        <div id="realtime-garnish-container" class="absolute inset-0 pointer-events-none z-30"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-t pt-2 flex flex-col gap-1">
+                            <div class="flex justify-between items-center text-[9px] text-pink-800">
+                                <span>데코 사이드 장식함 (클릭 시 빼기):</span>
+                                <div id="selected-garnishes" class="flex gap-1 min-h-[22px] items-center bg-pink-50/20 p-1 rounded-lg border border-pink-100"></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="goToPage(4)" class="flex-1 py-2 rounded-xl bg-gray-100 text-pink-900 font-bold button-bounce text-xs"><i class="fa-solid fa-arrow-left mr-0.5"></i> 오븐 조리방 가기</button>
+                                <button onclick="goToPage(6)" class="flex-1 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold button-bounce text-xs shadow-md">시식 테이블 차리기 <i class="fa-solid fa-arrow-right ml-0.5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="min-w-full flex flex-col p-4 md:p-6 justify-between gap-3">
+                        <div class="flex justify-between items-center pb-1.5 border-b-2 border-pink-100">
+                            <h3 class="text-lg md:text-xl font-bold text-pink-800 flex items-center gap-1.5"><i class="fa-solid fa-heart text-red-500"></i> 해피 플레이팅 한 상</h3>
+                            <span class="text-xs bg-pink-100 text-pink-800 px-2 py-0.5 rounded-full font-bold">맛있는 시식</span>
+                        </div>
+                        <p class="text-xs text-gray-500 text-center font-bold">완성된 컵과 빵을 직접 콕콕 터치해서 냠냠 마셔봐요!</p>
+                        <div class="flex flex-col items-center py-1">
+                            <div class="w-full max-w-sm bg-stone-100 rounded-[1.2rem] border-2 border-amber-200 p-2 relative flex flex-col justify-around h-36">
+                                <div class="absolute inset-1 border border-dashed border-amber-300/60 rounded-[1rem] pointer-events-none"></div>
+                                <div class="flex justify-around items-end relative z-10 h-full pb-1">
+                                    <div class="flex flex-col items-center">
+                                        <div id="final-juice-container" onclick="takeJuiceBite()" class="cursor-pointer active:scale-95 transition-transform duration-300 flex flex-col items-center relative">
+                                            <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-0.5 h-4 bg-red-500 rounded-sm rotate-12 z-20 origin-bottom"></div>
+                                            <div class="relative w-8 h-12 bg-white/50 border border-amber-400 rounded-b-lg shadow-sm overflow-hidden flex flex-col justify-end">
+                                                <div id="tray-juice-fill" class="w-full bg-red-400 h-10 transition-all duration-300"></div>
+                                            </div>
+                                        </div>
+                                        <span id="final-juice-name" class="text-[8px] font-bold mt-1 text-amber-900 bg-white px-1.5 rounded border border-amber-100 truncate max-w-[50px]">달콤 주스</span>
+                                    </div>
+                                    <div class="relative flex flex-col items-center justify-center">
+                                        <div id="final-bread-container" onclick="takeBreadBite()" class="cursor-pointer active:scale-95 transition-transform duration-300 flex flex-col items-center">
+                                            <div id="tray-cream" class="absolute top-1 w-10 h-4.5 rounded-full z-20 border border-pink-200 filter blur-[1px]"></div>
+                                            <div id="tray-bread-emoji" class="text-4xl relative z-10 transition-transform duration-100">🧁</div>
+                                        </div>
+                                        <span id="final-bread-name" class="text-[8px] font-bold mt-1 text-amber-900 bg-white px-1.5 rounded border border-amber-100 truncate max-w-[55px]">디저트</span>
+                                        <div id="tasting-garnish-container" class="absolute inset-0 pointer-events-none z-30"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-t pt-2 flex flex-col gap-1.5">
+                            <div class="bg-pink-50/40 p-2 rounded-xl text-[9px] text-pink-800 leading-normal text-center"><strong>🍽️ 시식 꿀팁:</strong> 컵을 탭하면 주스가 줄어들고, 빵을 탭하면 빵이 점점 작아져요!</div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex gap-1.5">
+                                    <button onclick="goToPage(5)" class="flex-1 py-1.5 rounded-lg bg-pink-100 hover:bg-pink-200 text-pink-900 font-bold button-bounce text-[10px]"><i class="fa-solid fa-arrow-left mr-0.5"></i> 데코 수정하기</button>
+                                    <button onclick="copyMyMenu()" class="flex-1 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-bold button-bounce text-[10px] shadow-sm"><i class="fa-solid fa-copy mr-0.5"></i> 레시피 클립보드 복사 📋</button>
+                                </div>
+                                <button onclick="resetWholeGame()" class="w-full py-1.5 rounded-lg bg-red-400 hover:bg-red-500 text-white font-bold button-bounce text-[10px] shadow-sm"><i class="fa-solid fa-rotate-left mr-0.5"></i> 새로 다시 만들기 🧁</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="prev-page-btn" onclick="prevPage()" class="absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-amber-800/80 hover:bg-amber-800 text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all z-40 hidden"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                <button id="next-page-btn" onclick="nextPage()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-amber-800/80 hover:bg-amber-800 text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all z-40 hidden"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+            </div>
+        </div>
+        <div id="bookmark-navigation" class="flex justify-center gap-1 mt-3 overflow-x-auto py-1">
+            <button id="tab-0" onclick="goToPage(0)" class="px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-700 text-white shadow-sm border-t-2 border-amber-950 transition-all button-bounce">표지 📖</button>
+            <button id="tab-1" onclick="goToPage(1)" class="px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-100 text-amber-800 transition-all button-bounce">1.재료 🍓</button>
+            <button id="tab-2" onclick="goToPage(2)" class="px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-100 text-amber-800 transition-all button-bounce">2.믹서 🌪️</button>
+            <button id="tab-3" onclick="goToPage(3)" class="px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-100 text-amber-800 transition-all button-bounce">3.반죽 🧁</button>
+            <button id="tab-4" onclick="goToPage(4)" class="px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-100 text-amber-800 transition-all button-bounce">4.오븐 ♨️</button>
+            <button id="tab-5" onclick="goToPage(5)" class="px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-100 text-amber-800 transition-all button-bounce">5.데코 🍒</button>
+            <button id="tab-6" onclick="goToPage(6)" class="px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-100 text-amber-800 transition-all button-bounce">6.시식 🍽️</button>
+        </div>
+    </main>
+    <footer class="text-center py-2 text-[10px] text-amber-950 font-bold"><p>© 꼬마 요리사 레시피 북 카페 🍹 한 단 세로형 스마트 북</p></footer>
+    <div id="toast-message" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-amber-900 text-amber-50 font-bold text-xs px-4 py-2 rounded-full shadow-2xl z-50">🍓 과일이 믹서기에 수납되었습니다!</div>
+    <script>
+        const gameData = { currentPage: 0, maxPages: 6, juice: { fruits: [], baseName: '', baseColor: '', blended: false, sipCount: 0 }, bread: { key: 'cupcake', emoji: '🧁', name: '컵케이크', creamName: '', creamColor: '', baked: false, biteCount: 0 }, garnishes: [] };
+        function goToPage(pageIndex) { if (pageIndex < 0 || pageIndex > gameData.maxPages) return; if (gameData.currentPage !== pageIndex) { soundPageFlip(); } gameData.currentPage = pageIndex; const slider = document.getElementById('book-slider'); slider.style.transform = \`translateX(-\${pageIndex * 100}%)\`; for (let i = 0; i <= gameData.maxPages; i++) { const tab = document.getElementById(\`tab-\${i}\`); if (tab) { if (i === pageIndex) { tab.className = "px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-700 text-white shadow-md border-t-2 border-amber-950 transform scale-105 transition-all"; } else { tab.className = "px-2 py-0.5 rounded-b-lg text-[9px] font-bold bg-amber-100 text-amber-800 transition-all button-bounce"; } } } const prevBtn = document.getElementById('prev-page-btn'); const nextBtn = document.getElementById('next-page-btn'); if (pageIndex === 0) { prevBtn.classList.add('hidden'); nextBtn.classList.add('hidden'); } else { prevBtn.classList.remove('hidden'); nextBtn.classList.remove('hidden'); if (pageIndex === gameData.maxPages) { nextBtn.classList.add('hidden'); } } if (pageIndex === 2) { updateBlenderUI(); } if (pageIndex === 5) { syncGarnishRealtimeView(); } if (pageIndex === 6) { syncTrayPlate(); } }
+        function nextPage() { if (gameData.currentPage < gameData.maxPages) { if (gameData.currentPage === 1 && gameData.juice.fruits.length === 0) { showToast("⚠️ 먼저 주스에 들어갈 과일을 한 개 이상 골라주세요!"); return; } if (gameData.currentPage === 1 && !gameData.juice.baseName) { showToast("⚠️ 주스 맛을 완성할 액체 베이스를 선택해 주세요!"); return; } if (gameData.currentPage === 2 && !gameData.juice.blended) { showToast("⚠️ 믹서기 ON 버튼을 눌러서 주스를 시원하게 갈아주세요!"); return; } if (gameData.currentPage === 3 && !gameData.bread.creamName) { showToast("⚠️ 빵 반죽 위에 얹어줄 맛있는 크림을 골라주세요!"); return; } if (gameData.currentPage === 4 && !gameData.bread.baked) { showToast("⚠️ 오븐 굽기! 다이얼을 탭해서 맛있게 구워주세요!"); return; } goToPage(gameData.currentPage + 1); } }
+        function prevPage() { if (gameData.currentPage > 0) { goToPage(gameData.currentPage - 1); } }
+        function addFruit(name, emoji, color) { if (gameData.juice.blended) { showToast("이미 주스가 완벽하게 갈아졌어요! 새로 만드시려면 '컵 비우기'를 눌러주세요."); return; } if (gameData.juice.fruits.length >= 6) { showToast("준비 컵이 가득 찼어요! 다음 쪽으로 넘어가 믹서기를 갈아봅시다."); return; } soundDrop(); gameData.juice.fruits.push({ name, emoji, color }); document.getElementById('prep-cup-guide').classList.add('hidden'); const prepCupItems = document.getElementById('prep-cup-items'); const fruitDiv = document.createElement('div'); fruitDiv.className = 'text-xl animate-fruit-drop transform origin-center select-none cursor-pointer'; fruitDiv.innerText = emoji; prepCupItems.appendChild(fruitDiv); updateBlenderUI(); showToast(\`\${emoji} \${name}(이)가 해피 준비 컵 속에 쏙 들어갔어요!\`); }
+        function setLiquidBase(baseName, color) { soundPour(); gameData.juice.baseName = baseName; gameData.juice.baseColor = color; const bases = ['base-milk', 'base-ade', 'base-yogurt', 'base-water']; bases.forEach(b => { const el = document.getElementById(b); if (el) el.className = "p-1.5 rounded-xl border border-slate-200 bg-white text-[10px] font-bold text-slate-500 button-bounce flex flex-col items-center gap-0.5"; }); const activeBtnId = \`base-\${baseName === '우유' ? 'milk' : baseName === '에이드' ? 'ade' : baseName === '요거트' ? 'yogurt' : 'water'}\`; const activeColorClass = baseName === '우유' ? 'border-amber-400 bg-amber-50 text-amber-800' : baseName === '에이드' ? 'border-sky-300 bg-sky-50 text-sky-800' : baseName === '요거트' ? 'border-pink-300 bg-pink-50 text-pink-800' : 'border-emerald-300 bg-emerald-50 text-emerald-800'; document.getElementById(activeBtnId).className = \`p-1.5 rounded-xl border-2 \${activeColorClass} text-[10px] font-bold button-bounce flex flex-col items-center gap-0.5\`; document.getElementById('prep-cup-guide').classList.add('hidden'); const prepCupLiquid = document.getElementById('prep-cup-liquid'); prepCupLiquid.style.backgroundColor = color; prepCupLiquid.style.height = '60%'; showToast(\`음료 베이스로 상큼한 [\${baseName}]를 부었습니다!\`); }
+        function updateBlenderUI() { const listContainer = document.getElementById('selected-fruits'); const itemVisualContainer = document.getElementById('blender-items'); if (!listContainer || !itemVisualContainer) return; if (gameData.juice.fruits.length === 0) { listContainer.innerHTML = '<span class="text-[9px] text-gray-400 italic">바구니에서 과일을 넣어주세요!</span>'; itemVisualContainer.innerHTML = ''; return; } listContainer.innerHTML = gameData.juice.fruits.map(f => \`<span class="inline-flex items-center gap-0.5 bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded-full text-[9px] font-bold border border-amber-200">\${f.emoji} \${f.name}</span>\`).join(''); itemVisualContainer.innerHTML = gameData.juice.fruits.map((f, index) => \`<div class="text-xl animate-bounce transform origin-center transition-all duration-300" style="animation-delay: \${index * 0.1}s">\${f.emoji}</div>\`).join(''); }
+        function blendFruits() { if (gameData.juice.fruits.length === 0) { playTone(300, 'sine', 0.25); showToast("과일을 선택하지 않았어요! 1쪽에서 과일을 먼저 담아주세요."); return; } soundClick(); const cup = document.getElementById('blender-cup'); const level = document.getElementById('blender-juice-level'); const vortex = document.getElementById('blender-vortex'); const hint = document.getElementById('blender-hint'); const blendBtn = document.getElementById('blend-btn'); blendBtn.disabled = true; hint.innerText = "위이이잉~~ 씽씽! 맛있게 과일을 부드럽게 갈고 있어요!"; cup.classList.add('animate-blender-shake'); vortex.classList.remove('hidden'); startMotorSound(); let targetColor = gameData.juice.baseColor || '#FFFDF3'; if (gameData.juice.fruits.length > 0) { targetColor = gameData.juice.fruits[0].color; } level.style.backgroundColor = targetColor; level.style.height = '85%'; setTimeout(() => { cup.classList.remove('animate-blender-shake'); vortex.classList.add('hidden'); stopMotorSound(); soundSuccess(); gameData.juice.blended = true; hint.innerText = "색이 고운 건강한 과즙 주스 대완성!"; document.getElementById('next-to-baking').classList.remove('hidden'); blendBtn.disabled = false; showToast("축하해요! 주스가 다 갈아졌습니다. 3쪽의 베이킹실로 넘어갑시다!"); }, 3000); }
+        function resetBlender() { soundClick(); gameData.juice.fruits = []; gameData.juice.baseName = ''; gameData.juice.baseColor = ''; gameData.juice.blended = false; gameData.juice.sipCount = 0; document.getElementById('prep-cup-guide').classList.remove('hidden'); document.getElementById('prep-cup-items').innerHTML = ''; const prepCupLiquid = document.getElementById('prep-cup-liquid'); prepCupLiquid.style.height = '0%'; prepCupLiquid.style.backgroundColor = 'transparent'; const bases = ['base-milk', 'base-ade', 'base-yogurt', 'base-water']; bases.forEach(b => { const el = document.getElementById(b); if (el) el.className = "p-1.5 rounded-xl border border-slate-200 bg-white text-[10px] font-bold text-slate-500 button-bounce flex flex-col items-center gap-0.5"; }); const level = document.getElementById('blender-juice-level'); if (level) { level.style.height = '0%'; level.style.backgroundColor = 'transparent'; } const nextBBtn = document.getElementById('next-to-baking'); if (nextBBtn) nextBBtn.classList.add('hidden'); const hint = document.getElementById('blender-hint'); if (hint) hint.innerText = "과일을 더 넣거나 베이스를 부어 믹서를 갈아주세요."; updateBlenderUI(); showToast("준비 컵과 믹서기가 말끔히 청소되었습니다!"); }
+        function finishJuice() { soundSuccess(); showToast("완성 주스를 저장하고 다음 반죽실로 이동합니다!"); setTimeout(() => { goToPage(3); }, 500); }
+        function selectBreadType(typeKey, emoji, koName) { soundClick(); gameData.bread.key = typeKey; gameData.bread.emoji = emoji; gameData.bread.name = koName; const cupcakeBtn = document.getElementById('mold-cupcake'); const donutBtn = document.getElementById('mold-donut'); const cakeBtn = document.getElementById('mold-cake'); cupcakeBtn.className = "p-1 border border-gray-200 bg-white rounded-lg flex flex-col items-center gap-0.5 transition-all"; donutBtn.className = "p-1 border border-gray-200 bg-white rounded-lg flex flex-col items-center gap-0.5 transition-all"; cakeBtn.className = "p-1 border border-gray-200 bg-white rounded-lg flex flex-col items-center gap-0.5 transition-all"; document.getElementById(\`mold-\${typeKey}\`).className = "p-1 border-2 border-orange-400 bg-orange-100/40 rounded-lg flex flex-col items-center gap-0.5 transition-all"; const prepDough = document.getElementById('prep-dough-base'); if (prepDough) { prepDough.innerText = emoji; prepDough.classList.add('scale-110'); setTimeout(() => prepDough.classList.remove('scale-110'), 150); } document.getElementById('oven-bread').innerText = emoji; document.getElementById('oven-bread').style.transform = 'scale(0.85)'; document.getElementById('prep-bread-guide').classList.add('hidden'); updateRecipeSummary(); }
+        function selectCream(creamName, hexColor) { soundSqueeze(); gameData.bread.creamName = creamName; gameData.bread.creamColor = hexColor; const creams = ['cream-strawberry', 'cream-choco', 'cream-mint', 'cream-vanilla']; creams.forEach(c => { const b = document.getElementById(c); if (b) { b.className = "p-1.5 border border-gray-200 bg-white text-gray-600 rounded-lg flex items-center gap-1 justify-center"; } }); const activeBtnId = \`cream-\${creamName === '딸기 핑크' ? 'strawberry' : creamName === '초코 브라운' ? 'choco' : creamName === '민트 그린' ? 'mint' : 'vanilla'}\`; const activeColorClass = creamName === '딸기 핑크' ? 'border-pink-300 bg-pink-50' : creamName === '초코 브라운' ? 'border-amber-400 bg-amber-50' : creamName === '민트 그린' ? 'border-emerald-300 bg-emerald-50' : 'border-yellow-300 bg-yellow-50'; document.getElementById(activeBtnId).className = \`p-1.5 border-2 \${activeColorClass} rounded-lg flex items-center gap-1 justify-center font-bold\`; const prepCream = document.getElementById('prep-cream-layer'); if (prepCream) { prepCream.classList.remove('animate-cream-drip'); prepCream.style.backgroundColor = hexColor; prepCream.style.opacity = '1'; void prepCream.offsetWidth; prepCream.classList.add('animate-cream-drip'); } document.getElementById('prep-bread-guide').classList.add('hidden'); updateRecipeSummary(); showToast(\`빵 반죽 위에 부드러운 [\${creamName}]을 부었습니다!\`); }
+        function updateRecipeSummary() { const summary = document.getElementById('recipe-summary'); if (summary) { const creamTxt = gameData.bread.creamName ? gameData.bread.creamName + " 크림" : "크림 선택 안 함"; summary.innerText = \`\${gameData.bread.name} + \${creamTxt}\`; } }
+        function startBaking() { soundClick(); const ovenBody = document.getElementById('oven-body'); const ovenHeat = document.getElementById('oven-heat-light'); const progress = document.getElementById('bake-progress'); const bread = document.getElementById('oven-bread'); const btn = document.getElementById('bake-btn'); const hint = document.getElementById('oven-hint'); btn.disabled = true; hint.innerText = "지글지글~~ 고온 가열 중! 부드럽게 빵을 구워내고 있어요!"; ovenBody.classList.add('animate-oven'); ovenHeat.classList.remove('hidden'); ovenHeat.style.backgroundColor = 'rgba(239, 68, 68, 0.2)'; bread.classList.add('animate-bread-rise'); startMotorSound(); let curProgress = 0; const interval = setInterval(() => { curProgress += 10; progress.style.width = \`\${curProgress}%\`; if (curProgress >= 100) { clearInterval(interval); ovenBody.classList.remove('animate-oven'); ovenHeat.style.backgroundColor = 'rgba(239, 68, 68, 0)'; stopMotorSound(); soundDing(); document.getElementById('oven-steam').classList.remove('hidden'); hint.innerText = "딩동! 달콤하고 고소한 갓구운 디저트 조리 완료!"; gameData.bread.baked = true; document.getElementById('next-to-plate').classList.remove('hidden'); btn.disabled = false; showToast("오븐 베이킹이 노릇하게 끝났어요! 5쪽에서 달콤하게 마무리해봐요!"); } }, 200); }
+        function finishBaking() { soundSuccess(); showToast("구워낸 디저트를 데코 플레이팅실로 옮깁니다!"); setTimeout(() => { goToPage(5); }, 500); }
+        function addGarnish(emoji, name) { soundClick(); if (gameData.garnishes.length >= 3) { showToast("접시에 곁들일 미니 간식은 3개까지가 알맞아요!"); return; } gameData.garnishes.push({ emoji, name }); updateGarnishUI(); syncGarnishRealtimeView(); showToast(\`접시 위에 [\${emoji} \${name}] 장식을 곁들였습니다.\`); }
+        function removeGarnish(index) { soundClick(); gameData.garnishes.splice(index, 1); updateGarnishUI(); syncGarnishRealtimeView(); showToast("장식 가니쉬가 접시에서 내려갔습니다."); }
+        function updateGarnishUI() { const listContainer = document.getElementById('selected-garnishes'); if (!listContainer) return; if (gameData.garnishes.length === 0) { listContainer.innerHTML = '<span class="text-[9px] text-gray-400 italic">체리, 눈꽃크림, 꽃송이떡을 올려봐요!</span>'; } else { listContainer.innerHTML = gameData.garnishes.map((g, i) => \`<span onclick="removeGarnish(\${i})" class="cursor-pointer inline-flex items-center gap-0.5 bg-pink-100 hover:bg-pink-200 text-pink-800 px-1.5 py-0.5 rounded-full text-[9px] font-bold border border-pink-200 animate-pulse">\${g.emoji} \${g.name} <i class="fa-solid fa-circle-xmark text-[9px] ml-0.5"></i></span>\`).join(''); } }
+        function syncGarnishRealtimeView() { let jColor = '#FF4E79'; if (gameData.juice.fruits.length > 0) { jColor = gameData.juice.fruits[0].color; } const previewJuice = document.getElementById('preview-juice-fill'); if (previewJuice) previewJuice.style.backgroundColor = jColor; const previewCream = document.getElementById('preview-cream'); if (previewCream) { previewCream.style.backgroundColor = gameData.bread.creamColor; } const previewBread = document.getElementById('preview-bread-emoji'); if (previewBread) { previewBread.innerText = gameData.bread.emoji; } const realtimeContainer = document.getElementById('realtime-garnish-container'); const tastingContainer = document.getElementById('tasting-garnish-container'); const offsets = [{ top: '-10px', left: '-15px' }, { bottom: '-5px', right: '-12px' }, { top: '10px', right: '-20px' }]; let htmlContent = ''; gameData.garnishes.forEach((g, idx) => { const pos = offsets[idx % offsets.length]; const styleStr = Object.entries(pos).map(([k, v]) => \`\${k}:\${v}\`).join(';'); htmlContent += \`<div class="absolute text-xl filter drop-shadow-md transform transition-all duration-300 pointer-events-none animate-bounce" style="\${styleStr}; animation-delay: \${idx * 0.2}s">\${g.emoji}</div>\`; }); if (realtimeContainer) realtimeContainer.innerHTML = htmlContent; if (tastingContainer) tastingContainer.innerHTML = htmlContent; }
+        function syncTrayPlate() { let jColor = '#FF8B9E'; if (gameData.juice.fruits.length > 0) { jColor = gameData.juice.fruits[0].color; } document.getElementById('tray-juice-fill').style.backgroundColor = jColor; let nameStr = "과일 에이드"; if (gameData.juice.fruits.length > 0) { nameStr = gameData.juice.fruits.map(f => f.name.substring(0,2)).join('') + \` \${gameData.juice.baseName}\`; } document.getElementById('final-juice-name').innerText = nameStr; document.getElementById('tray-bread-emoji').innerText = gameData.bread.emoji; document.getElementById('tray-cream').style.backgroundColor = gameData.bread.creamColor; document.getElementById('final-bread-name').innerText = gameData.bread.name; syncGarnishRealtimeView(); }
+        function takeJuiceBite() { if (gameData.juice.sipCount >= 4) { playTone(330, 'sine', 0.2); showToast("주스를 다 마셨어요! 새 컵으로 시작하려면 아래 새로 만들기를 눌러주세요."); return; } gameData.juice.sipCount++; playTone(880, 'sine', 0.08); setTimeout(() => playTone(659.25, 'sine', 0.12), 50); const fill = document.getElementById('tray-juice-fill'); const percentLeft = 100 - (gameData.juice.sipCount * 25); fill.style.height = \`\${percentLeft}%\`; if (gameData.juice.sipCount === 4) { showToast("꿀꺽꿀꺽! 마지막 한 방울까지 깔끔하게 다 마셨습니다! 🍹"); } else { showToast(\`시원하게 한 입 쭉 마셨습니다! (남은 양: \${percentLeft}%)\`); } }
+        function takeBreadBite() { if (gameData.bread.biteCount >= 3) { playTone(330, 'sine', 0.2); showToast("달콤한 빵을 다 먹었어요! 처음부터 다시 요리해 볼까요?"); return; } gameData.bread.biteCount++; playTone(987.77, 'triangle', 0.06); setTimeout(() => playTone(1318.51, 'triangle', 0.1), 50); const emojiEl = document.getElementById('tray-bread-emoji'); if (gameData.bread.biteCount === 1) { emojiEl.style.transform = 'scale(0.8)'; showToast("냠냠! 🍰 너무나 감미롭고 달달한 디저트 한 입!"); } else if (gameData.bread.biteCount === 2) { emojiEl.style.transform = 'scale(0.55)'; showToast("냠냠! 입에서 살살 녹아내려요!"); } else if (gameData.bread.biteCount === 3) { emojiEl.style.transform = 'scale(0)'; document.getElementById('tray-cream').style.opacity = '0'; showToast("꿀꺽! 맛있는 홈메이드 디저트 한 개 대완식 완료!"); } }
+        function resetWholeGame() { soundDing(); gameData.juice.fruits = []; gameData.juice.baseName = ''; gameData.juice.baseColor = ''; gameData.juice.blended = false; gameData.juice.sipCount = 0; gameData.bread.creamName = ''; gameData.bread.creamColor = ''; gameData.bread.baked = false; gameData.bread.biteCount = 0; gameData.garnishes = []; document.getElementById('prep-cup-guide').classList.remove('hidden'); document.getElementById('prep-cup-items').innerHTML = ''; const prepCupLiquid = document.getElementById('prep-cup-liquid'); prepCupLiquid.style.height = '0%'; prepCupLiquid.style.backgroundColor = 'transparent'; document.getElementById('prep-bread-guide').classList.remove('hidden'); const prepCream = document.getElementById('prep-cream-layer'); prepCream.style.opacity = '0'; prepCream.style.backgroundColor = 'transparent'; prepCream.classList.remove('animate-cream-drip'); const molds = ['mold-cupcake', 'mold-donut', 'mold-cake']; molds.forEach(m => { const el = document.getElementById(m); if (el) el.className = "p-1 border border-gray-200 bg-white rounded-lg flex flex-col items-center gap-0.5 transition-all"; }); document.getElementById('mold-cupcake').className = "p-1 border-2 border-orange-400 bg-orange-100/40 rounded-lg flex flex-col items-center gap-0.5 transition-all"; document.getElementById('prep-dough-base').innerText = '🧁'; const creams = ['cream-strawberry', 'cream-choco', 'cream-mint', 'cream-vanilla']; creams.forEach(c => { const b = document.getElementById(c); if (b) { b.className = "p-1.5 border border-gray-200 bg-white text-gray-600 rounded-lg flex items-center gap-1 justify-center"; } }); const bases = ['base-milk', 'base-ade', 'base-yogurt', 'base-water']; bases.forEach(b => { const el = document.getElementById(b); if (el) el.className = "p-1.5 rounded-xl border border-slate-200 bg-white text-[10px] font-bold text-slate-500 button-bounce flex flex-col items-center gap-0.5"; }); const fill = document.getElementById('tray-juice-fill'); if (fill) fill.style.height = '100%'; const emojiEl = document.getElementById('tray-bread-emoji'); if (emojiEl) emojiEl.style.transform = 'scale(1)'; const cream = document.getElementById('tray-cream'); if (cream) cream.style.opacity = '1'; const progress = document.getElementById('bake-progress'); if (progress) progress.style.width = '0%'; const ovenBread = document.getElementById('oven-bread'); if (ovenBread) ovenBread.style.transform = 'scale(0.85)'; const ovenSteam = document.getElementById('oven-steam'); if (ovenSteam) ovenSteam.classList.add('hidden'); resetBlender(); updateRecipeSummary(); goToPage(0); showToast("다이어리의 레시피 기록이 깔끔하게 초기화되었습니다. 표지부터 다시 시작해 봐요!"); }
+        let toastTimeout;
+        function showToast(msg) { const toast = document.getElementById('toast-message'); toast.innerText = msg; toast.classList.remove('hidden'); toast.classList.remove('toast-active'); void toast.offsetWidth; toast.classList.add('toast-active'); clearTimeout(toastTimeout); toastTimeout = setTimeout(() => { toast.classList.add('hidden'); }, 3500); }
+        function copyMyMenu() { soundClick(); let juiceName = "과일 에이드"; if (gameData.juice.fruits.length > 0) { juiceName = gameData.juice.fruits.map(f => f.name.substring(0,2)).join('') + \` \${gameData.juice.baseName}\`; } const breadName = gameData.bread.name; const garnishNames = gameData.garnishes.length > 0 ? gameData.garnishes.map(g => g.name).join(', ') : '없음'; const textToCopy = \`📖 꼬마 요리사의 해피 디저트 다이어리 💌\\n- 주스 종류: \${juiceName}\\n- 디저트 베이커리: \${breadName}\\n- 추가 간식 장식: \${garnishNames}\\n모바일로 정성스레 구운 시식 테이블을 공유해보세요!\`; const textarea = document.createElement('textarea'); textarea.value = textToCopy; document.body.appendChild(textarea); textarea.select(); try { document.execCommand('copy'); showToast("📋 멋진 레시피 다이어리 내용이 클립보드에 복사되었습니다!"); } catch (err) { showToast("복사 기능에 문제가 발생해 복사를 진행하지 못했습니다."); } document.body.removeChild(textarea); }
+        window.onload = function() { updateBlenderUI(); updateRecipeSummary(); };
+    <\/script>
+</body>
+</html>`;
+
+        /* 2. Blob 및 Blob URL 생성 (긴 HTML 코드로 인한 qrcodejs 버전 인코딩 오류 방지) */
+        const blob = new Blob([rawGameHtml], { type: 'text/html;charset=utf-8' });
+        const gameBlobUrl = URL.createObjectURL(blob);
+
+        /* 3. QR 코드 생성 */
+        let qrCodeObj;
+        window.onload = function() {
+            qrCodeObj = new QRCode(document.getElementById("qrcode"), {
+                text: gameBlobUrl,
+                width: 200,
+                height: 200,
+                colorDark: "#4A2E1A",
+                colorLight: "#FFFFFF",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        };
+
+        /* 4. 새 창에서 바로 게임 실행 */
+        function openGameInNewTab() {
+            const win = window.open(gameBlobUrl, '_blank');
+            if (!win) {
+                showToast("⚠️ 팝업 차단이 활성화되어 있습니다. 팝업 허용 후 다시 시도해 주세요.");
+            }
+        }
+
+        /* 5. 링크 클립보드 복사 */
+        function copyGameUrl() {
+            const tempInput = document.createElement("input");
+            document.body.appendChild(tempInput);
+            tempInput.value = gameBlobUrl;
+            tempInput.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast("📋 게임 실행 Blob URL 링크가 클립보드에 복사되었습니다!");
+            } catch (e) {
+                showToast("⚠️ 복사 실패. 주소창을 직접 복사해 주세요.");
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        /* 6. QR 코드 이미지 다운로드 */
+        function downloadQRCode() {
+            const qrImg = document.querySelector("#qrcode img");
+            if (qrImg) {
+                const link = document.createElement("a");
+                link.href = qrImg.src;
+                link.download = "꼬마요리사_카페놀이_QR.png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast("📥 QR 코드 이미지가 다운로드되었습니다!");
+            } else {
+                showToast("⚠️ QR 코드가 아직 준비되지 않았습니다.");
+            }
+        }
+
+        /* 7. 토스트 안내 함수 */
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast-message');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            toast.classList.remove('toast-active');
+            
+            void toast.offsetWidth;
+            toast.classList.add('toast-active');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+```
+
+```html:QR 코드 및 링크 생성기:index.html
